@@ -3,139 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love Slot Machine</title>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <title>Tamagotchi Gatito 🐱</title>
     <style>
         body {
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: black;
+            background-color: black;
+            color: white;
+            text-align: center;
             font-family: Arial, sans-serif;
         }
 
-        .slot-machine {
-            width: 350px;
-            height: 500px;
-            background: linear-gradient(to bottom, #666, #333);
+        .tamagotchi-container {
+            width: 300px;
+            height: 300px;
+            background-color: gray;
             border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0px 0px 20px rgba(255, 215, 0, 0.7);
-            border: 5px solid gray;
-            position: relative;
-        }
-
-        .slot-reels {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 30px 0;
-        }
-
-        .reel {
-            width: 80px;
-            height: 120px;
-            background: white; /* Fondo blanco para destacar */
-            border: 3px solid gray;
-            border-radius: 10px;
+            margin: 20px auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 50px;
-            font-weight: bold;
-            color: red;
-            box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            transition: transform 0.3s ease-in-out;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
+            position: relative;
         }
 
-        .slot-button {
-            background: linear-gradient(to bottom, #ff0000, #cc0000);
-            padding: 15px 40px;
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-            border-radius: 50px;
+        .tamagotchi-img {
+            width: 250px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .status {
+            margin: 10px;
+            font-size: 18px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .button-container button {
+            background-color: yellow;
+            color: black;
+            font-size: 18px;
+            padding: 10px;
+            margin: 5px;
             cursor: pointer;
-            border: 2px solid gold;
-            box-shadow: 0px 5px 0px #800000;
-            transition: transform 0.1s;
+            border: none;
+            border-radius: 10px;
+            display: none; /* Ocultos al inicio */
         }
 
-        .slot-button:active {
-            transform: translateY(5px);
-            box-shadow: none;
+        .button-container button:hover {
+            background-color: orange;
         }
 
-        .jackpot {
-            font-size: 24px;
+        .narrator {
+            font-size: 22px;
             font-weight: bold;
-            color: gold;
-            text-shadow: 0px 0px 10px gold;
-            margin-top: 10px;
-            visibility: hidden;
+            color: pink;
+            text-shadow: 0px 0px 10px pink;
+            margin-top: 20px;
         }
 
-        .message {
+        .final-message {
             font-size: 20px;
             font-weight: bold;
-            color: white;
+            color: pink;
             text-shadow: 0px 0px 10px pink;
             margin-top: 10px;
             visibility: hidden;
         }
+
+        .name-container {
+            margin-bottom: 20px;
+        }
+
+        .name-container input {
+            font-size: 18px;
+            padding: 5px;
+            border-radius: 5px;
+            border: none;
+            text-align: center;
+        }
+
+        .name-container button {
+            background-color: lightblue;
+            color: black;
+            font-size: 18px;
+            padding: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .name-container button:hover {
+            background-color: deepskyblue;
+        }
     </style>
 </head>
 <body>
-    <div class="slot-machine">
-        <h2 id="slot-title" style="color: gold; text-shadow: 2px 2px 5px gold;">¿Sabes por qué siempre gano?</h2>
-        <div class="slot-reels">
-            <div class="reel">🍒</div>
-            <div class="reel">⭐</div>
-            <div class="reel">🍉</div>
-        </div>
-        <button class="slot-button" onclick="spinReels()">🎲 SPIN</button>
-        <p class="jackpot">🎉 Premio! 🎉</p>
-        <p class="message" id="love-message">💖 Mi suerte eres tú 💖</p>
+
+    <div class="name-container">
+        <p>Introduce el nombre de tu gatito:</p>
+        <input type="text" id="cat-name-input" placeholder="Ej: Michi">
+        <button onclick="startGame()">Empezar</button>
     </div>
 
-    <script>
-        const slotSymbols = ["🍒", "🍉", "⭐", "🍋", "💰", "🎰", "💎", "🔔"];
-        let reels = document.querySelectorAll(".reel");
-        let jackpotText = document.querySelector(".jackpot");
-        let titleText = document.getElementById("slot-title");
-        let loveMessage = document.getElementById("love-message");
+    <h1 id="cat-title" style="display: none;">🐱 Tu Gatito Virtual 🐱</h1>
 
-        function getRandomSymbol() {
-            return slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+    <div class="tamagotchi-container" style="display: none;">
+        <img id="tamagotchi" class="tamagotchi-img" src="" alt="Gatito">
+    </div>
+
+    <div class="status" style="display: none;">
+        <p>Hambre: <span id="hunger">0</span> 🍖</p>
+        <p>Felicidad: <span id="happiness">0</span> 😊</p>
+    </div>
+
+    <div class="button-container">
+        <button id="feed-btn" onclick="feedCat()">🍖 Alimentar</button>
+        <button id="play-btn" onclick="playWithCat()">🎾 Jugar</button>
+        <button id="restart-btn" onclick="restartGame()" style="display: none;">🔄 Volver a comenzar</button>
+    </div>
+
+    <p class="narrator" id="narrator" style="display: none;">Tu gatito tiene hambre, ¡dale de comer! 🍖</p>
+
+    <p class="final-message" id="finalMessage">💖 Mañana mi sorpresa no será un gatito... pero este lo puedes llevar siempre contigo 💖</p>
+
+    <script>
+        let stage = 0;
+        let hunger = 0;
+        let happiness = 0;
+        let catName = "Tu Gatito";
+
+        let catTitle = document.getElementById("cat-title");
+        let catImg = document.getElementById("tamagotchi");
+        let hungerSpan = document.getElementById("hunger");
+        let happinessSpan = document.getElementById("happiness");
+        let narrator = document.getElementById("narrator");
+        let finalMessage = document.getElementById("finalMessage");
+
+        let feedBtn = document.getElementById("feed-btn");
+        let playBtn = document.getElementById("play-btn");
+        let restartBtn = document.getElementById("restart-btn");
+        let saveBtn = document.getElementById("save-btn");
+
+        let catStages = [
+            { name: "Bebé Gatito 🍼", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7jFOpzZYmr6EEqeHRRZgUUlaDlpdleZjt_TW_mmtSwHx0ahYIeJSBE5Ak_1LmbWAMDoQ&usqp=CAU", requiredHunger: 3 },
+            { name: "Gatito Joven 🐱", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGWk0VBsdDNJw6oKrlwjsEeQM-9J1zJKeQKqrrRJ81QHO0cx_pnjmxtJvQpJaPwhAxEeI&usqp=CAU", requiredHappiness: 3 },
+            { name: "Gato Adulto 🦁", img: "https://files.idyllic.app/files/static/2250726?width=384", requiredHappiness: 5 }
+        ];
+
+        function startGame() {
+            catName = document.getElementById("cat-name-input").value || "Tu Gatito";
+            document.querySelector(".name-container").style.display = "none";
+            catTitle.innerText = `🐱 ${catName} 🐱`;
+            catTitle.style.display = "block";
+            document.querySelector(".tamagotchi-container").style.display = "flex";
+            document.querySelector(".status").style.display = "block";
+            narrator.style.display = "block";
+            catImg.src = catStages[0].img;
+            feedBtn.style.display = "inline-block";
         }
 
-        function spinReels() {
-            jackpotText.style.visibility = "hidden";
-            loveMessage.style.visibility = "hidden";
-            titleText.innerText = "Girando... 🎰";
+        function feedCat() {
+            if (stage === 0 && hunger < catStages[stage].requiredHunger) {
+                hunger++;
+                hungerSpan.innerText = hunger;
+                narrator.innerText = `🍖 ¡${catName} está comiendo!`;
+                if (hunger >= catStages[stage].requiredHunger) evolveCat();
+            }
+        }
 
-            let spins = 15; // Número de giros antes de detenerse
-            let interval = setInterval(() => {
-                reels.forEach(reel => reel.innerText = getRandomSymbol());
-                reels.forEach(reel => reel.style.transform = `rotate(${Math.random() * 10 - 5}deg)`);
-            }, 100);
+        function playWithCat() {
+            if (stage === 1 && happiness < catStages[stage].requiredHappiness) {
+                happiness++;
+                happinessSpan.innerText = happiness;
+                narrator.innerText = `🎾 ¡${catName} está jugando feliz!`;
+                if (happiness >= catStages[stage].requiredHappiness) evolveCat();
+            }
+        }
 
-            setTimeout(() => {
-                clearInterval(interval);
-                reels.forEach(reel => {
-                    reel.innerText = "❤️";  // SIEMPRE termina en 3 corazones
-                    reel.style.transform = "rotate(0deg)";
-                });
-
-                // Jackpot y mensaje romántico aparecen
-                jackpotText.style.visibility = "visible";
-                loveMessage.style.visibility = "visible";
-                titleText.innerText = "💖 Porqué...💖";
-            }, 2000); // Tiempo total del giro
+        function evolveCat() {
+            stage++;
+            catImg.src = catStages[stage].img;
+            if (stage === 1) {
+                narrator.innerText = "Ahora quiere jugar, ¡diviértete con él! 🎾";
+                feedBtn.style.display = "none";
+                playBtn.style.display = "inline-block";
+            } else if (stage === 2) {
+                narrator.innerText = `¡${catName} ha crecido completamente y te quiere infinito! 💖`;
+                finalMessage.style.visibility = "visible";
+                saveBtn.style.display = "inline-block";
+                restartBtn.style.display = "inline-block";
+                playBtn.style.display = "none";
+            }
         }
     </script>
 </body>
