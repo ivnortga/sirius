@@ -2,98 +2,141 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Juego Rápido de San Valentín</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Love Slot Machine</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
     <style>
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-        }
-        .card {
-            height: 100px;
+        body {
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 20px;
-            cursor: pointer;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            background-color: #fff;
+            height: 100vh;
+            background: black;
+            font-family: Arial, sans-serif;
         }
-        .hidden {
-            background-color: #fff;
-            color: #fff;
+
+        .slot-machine {
+            width: 350px;
+            height: 500px;
+            background: linear-gradient(to bottom, #666, #333);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0px 0px 20px rgba(255, 215, 0, 0.7);
+            border: 5px solid gray;
+            position: relative;
+        }
+
+        .slot-reels {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+        }
+
+        .reel {
+            width: 80px;
+            height: 120px;
+            background: white; /* Fondo blanco para destacar */
+            border: 3px solid gray;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            font-weight: bold;
+            color: red;
+            box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .slot-button {
+            background: linear-gradient(to bottom, #ff0000, #cc0000);
+            padding: 15px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            border: 2px solid gold;
+            box-shadow: 0px 5px 0px #800000;
+            transition: transform 0.1s;
+        }
+
+        .slot-button:active {
+            transform: translateY(5px);
+            box-shadow: none;
+        }
+
+        .jackpot {
+            font-size: 24px;
+            font-weight: bold;
+            color: gold;
+            text-shadow: 0px 0px 10px gold;
+            margin-top: 10px;
+            visibility: hidden;
+        }
+
+        .message {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0px 0px 10px pink;
+            margin-top: 10px;
+            visibility: hidden;
         }
     </style>
 </head>
-<body class="bg-pink-200 flex flex-col justify-center items-center min-h-screen m-0">
-    <h1 class="text-4xl font-bold text-center text-red-500 mb-5">Juego Rápido de San Valentín</h1>
-    <div class="grid w-full px-4">
-        <!-- Tarjetas se generan con JavaScript -->
+<body>
+    <div class="slot-machine">
+        <h2 id="slot-title" style="color: gold; text-shadow: 2px 2px 5px gold;">¿Sabes por qué siempre gano?</h2>
+        <div class="slot-reels">
+            <div class="reel">🍒</div>
+            <div class="reel">⭐</div>
+            <div class="reel">🍉</div>
+        </div>
+        <button class="slot-button" onclick="spinReels()">🎲 SPIN</button>
+        <p class="jackpot">🎉 Premio! 🎉</p>
+        <p class="message" id="love-message">💖 Mi suerte eres tú 💖</p>
     </div>
-    <p id="mensajeFinal" class="text-2xl text-red-600 mt-4 opacity-0">¡Felicidades! Has encontrado todas las parejas. ¡Feliz día tesoro!</p>
 
     <script>
-        const imagenes = ['❤️', '🌹', '🍫', '💋', '❤️', '🌹', '🍫', '💋'];
-        const grid = document.querySelector('.grid');
-        let tarjeta1 = null;
-        let tarjeta2 = null;
-        let parejasEncontradas = 0;
+        const slotSymbols = ["🍒", "🍉", "⭐", "🍋", "💰", "🎰", "💎", "🔔"];
+        let reels = document.querySelectorAll(".reel");
+        let jackpotText = document.querySelector(".jackpot");
+        let titleText = document.getElementById("slot-title");
+        let loveMessage = document.getElementById("love-message");
 
-        function inicializarTablero() {
-            imagenes.sort(() => Math.random() - 0.5);
-            imagenes.forEach((imagen, index) => {
-                const tarjeta = document.createElement('div');
-                tarjeta.classList.add('card', 'flex', 'justify-center', 'items-center', 'rounded-lg', 'shadow-md', 'text-2xl');
-                tarjeta.dataset.image = imagen;
-                tarjeta.dataset.index = index;
-                tarjeta.addEventListener('click', revelarTarjeta);
-                grid.appendChild(tarjeta);
-            });
+        function getRandomSymbol() {
+            return slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
         }
 
-        function revelarTarjeta() {
-            if (tarjeta1 && tarjeta2) {
-                return;
-            }
-            this.classList.add('hidden');
-            this.innerHTML = this.dataset.image;
-            if (!tarjeta1) {
-                tarjeta1 = this;
-            } else if (this !== tarjeta1) {
-                tarjeta2 = this;
-                verificarPareja();
-            }
-        }
+        function spinReels() {
+            jackpotText.style.visibility = "hidden";
+            loveMessage.style.visibility = "hidden";
+            titleText.innerText = "Girando... 🎰";
 
-        function verificarPareja() {
-            if (tarjeta1.dataset.image === tarjeta2.dataset.image) {
-                parejasEncontradas++;
-                tarjeta1.removeEventListener('click', revelarTarjeta);
-                tarjeta2.removeEventListener('click', revelarTarjeta);
-                if (parejasEncontradas === imagenes.length / 2) {
-                    document.getElementById('mensajeFinal').style.opacity = 1;
-                }
-                resetearTarjetas();
-            } else {
-                setTimeout(() => {
-                    tarjeta1.classList.remove('hidden');
-                    tarjeta2.classList.remove('hidden');
-                    tarjeta1.innerHTML = '';
-                    tarjeta2.innerHTML = '';
-                    resetearTarjetas();
-                }, 1000);
-            }
-        }
+            let spins = 15; // Número de giros antes de detenerse
+            let interval = setInterval(() => {
+                reels.forEach(reel => reel.innerText = getRandomSymbol());
+                reels.forEach(reel => reel.style.transform = `rotate(${Math.random() * 10 - 5}deg)`);
+            }, 100);
 
-        function resetearTarjetas() {
-            tarjeta1 = null;
-            tarjeta2 = null;
-        }
+            setTimeout(() => {
+                clearInterval(interval);
+                reels.forEach(reel => {
+                    reel.innerText = "❤️";  // SIEMPRE termina en 3 corazones
+                    reel.style.transform = "rotate(0deg)";
+                });
 
-        inicializarTablero();
+                // Jackpot y mensaje romántico aparecen
+                jackpotText.style.visibility = "visible";
+                loveMessage.style.visibility = "visible";
+                titleText.innerText = "💖 Porqué...💖";
+            }, 2000); // Tiempo total del giro
+        }
     </script>
 </body>
 </html>
