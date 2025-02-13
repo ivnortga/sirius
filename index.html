@@ -3,204 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tamagotchi Gatito 🐱</title>
+    <title>Novela Visual - San Valentín 💖</title>
     <style>
         body {
-            background-color: black;
-            color: white;
+            margin: 0;
+            padding: 0;
             text-align: center;
             font-family: Arial, sans-serif;
+            background-color: black;
+            color: white;
+            overflow: hidden;
         }
 
-        .tamagotchi-container {
-            width: 300px;
-            height: 300px;
-            background-color: gray;
-            border-radius: 20px;
-            margin: 20px auto;
+        .scene-container {
+            width: 100vw;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
             display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
             align-items: center;
-            justify-content: center;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
             position: relative;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
         }
 
-        .tamagotchi-img {
-            width: 250px;
-            height: auto;
+        .text-box {
+            width: 80%;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
             border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 20px;
         }
 
-        .status {
-            margin: 10px;
-            font-size: 18px;
-        }
-
-        .button-container {
+        .choices {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .button-container button {
-            background-color: yellow;
-            color: black;
-            font-size: 18px;
-            padding: 10px;
-            margin: 5px;
-            cursor: pointer;
-            border: none;
-            border-radius: 10px;
-            display: none; /* Ocultos al inicio */
-        }
-
-        .button-container button:hover {
-            background-color: orange;
-        }
-
-        .narrator {
-            font-size: 22px;
-            font-weight: bold;
-            color: pink;
-            text-shadow: 0px 0px 10px pink;
-            margin-top: 20px;
-        }
-
-        .final-message {
-            font-size: 20px;
-            font-weight: bold;
-            color: pink;
-            text-shadow: 0px 0px 10px pink;
-            margin-top: 10px;
-            visibility: hidden;
-        }
-
-        .name-container {
+            gap: 15px;
             margin-bottom: 20px;
         }
 
-        .name-container input {
-            font-size: 18px;
-            padding: 5px;
-            border-radius: 5px;
-            border: none;
-            text-align: center;
-        }
-
-        .name-container button {
-            background-color: lightblue;
+        .choices button {
+            background-color: pink;
             color: black;
             font-size: 18px;
-            padding: 5px;
-            cursor: pointer;
+            padding: 10px 15px;
             border: none;
             border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        .name-container button:hover {
-            background-color: deepskyblue;
+        .choices button:hover {
+            background-color: hotpink;
+        }
+
+        #music {
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="name-container">
-        <p>Introduce el nombre de tu gatito:</p>
-        <input type="text" id="cat-name-input" placeholder="Ej: Michi">
-        <button onclick="startGame()">Empezar</button>
+    <audio id="music" loop>
+        <source src="music.mp3" type="audio/mp3">
+    </audio>
+
+    <div id="scene" class="scene-container">
+        <div id="text-box" class="text-box"></div>
+        <div id="choices" class="choices"></div>
     </div>
-
-    <h1 id="cat-title" style="display: none;">🐱 Tu Gatito Virtual 🐱</h1>
-
-    <div class="tamagotchi-container" style="display: none;">
-        <img id="tamagotchi" class="tamagotchi-img" src="" alt="Gatito">
-    </div>
-
-    <div class="status" style="display: none;">
-        <p>Hambre: <span id="hunger">0</span> 🍖</p>
-        <p>Felicidad: <span id="happiness">0</span> 😊</p>
-    </div>
-
-    <div class="button-container">
-        <button id="feed-btn" onclick="feedCat()">🍖 Alimentar</button>
-        <button id="play-btn" onclick="playWithCat()">🎾 Jugar</button>
-        <button id="restart-btn" onclick="restartGame()" style="display: none;">🔄 Volver a comenzar</button>
-    </div>
-
-    <p class="narrator" id="narrator" style="display: none;">Tu gatito tiene hambre, ¡dale de comer! 🍖</p>
-
-    <p class="final-message" id="finalMessage">💖 Mañana mi sorpresa no será un gatito... pero este lo puedes llevar siempre contigo 💖</p>
 
     <script>
-        let stage = 0;
-        let hunger = 0;
-        let happiness = 0;
-        let catName = "Tu Gatito";
-
-        let catTitle = document.getElementById("cat-title");
-        let catImg = document.getElementById("tamagotchi");
-        let hungerSpan = document.getElementById("hunger");
-        let happinessSpan = document.getElementById("happiness");
-        let narrator = document.getElementById("narrator");
-        let finalMessage = document.getElementById("finalMessage");
-
-        let feedBtn = document.getElementById("feed-btn");
-        let playBtn = document.getElementById("play-btn");
-        let restartBtn = document.getElementById("restart-btn");
-        let saveBtn = document.getElementById("save-btn");
-
-        let catStages = [
-            { name: "Bebé Gatito 🍼", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7jFOpzZYmr6EEqeHRRZgUUlaDlpdleZjt_TW_mmtSwHx0ahYIeJSBE5Ak_1LmbWAMDoQ&usqp=CAU", requiredHunger: 3 },
-            { name: "Gatito Joven 🐱", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGWk0VBsdDNJw6oKrlwjsEeQM-9J1zJKeQKqrrRJ81QHO0cx_pnjmxtJvQpJaPwhAxEeI&usqp=CAU", requiredHappiness: 3 },
-            { name: "Gato Adulto 🦁", img: "https://files.idyllic.app/files/static/2250726?width=384", requiredHappiness: 5 }
+        const story = [
+            {
+                background: "img/1-habitacion.jpg", 
+                text: "Es un día tranquilo en tu habitación. Tu teléfono vibra con un mensaje misterioso...",
+                choices: [{ text: "Abrir el mensaje", next: 1 }]
+            },
+            {
+                background: "img/2-playa.jpg", 
+                text: "El mensaje te manda una ubicación. Al llegar, es la playa con un espigón al lado. En la arena hay un mensaje que dice: '¿Recuerdas la primera vez?'",
+                choices: [
+                    { text: "Sí, el monte Ineldo.", next: 2 },
+                    { text: "Te gané en los autos de choque.", next: 2 }
+                ]
+            },
+            {
+                background: "img/3-olas.jpg", 
+                text: "Sigues a una nueva ubicación. Mientras el sonido de las olas te relaja, sigues explorando...",
+                choices: [{ text: "Seguir explorando", next: 3 }]
+            },
+            {
+                background: "img/4-grafiti.jpg", 
+                text: "De repente, al llegar, ves un coche delante tuyo. Te subes a él y ves que siguen tus dibujos...",
+                choices: [{ text: "¡Es mi grafiti! ¿Por qué sigue ahí?", next: 4 }]
+            },
+            {
+                background: "img/5-final.jpg", 
+                text: "Porque hasta que no te veo, mi mundo se congela hasta volverte a ver... Porque eres la única persona que hace que mi corazón lata más fuerte.",
+                choices: [{ text: "Te amo.", next: null }]
+            }
         ];
 
-        function startGame() {
-            catName = document.getElementById("cat-name-input").value || "Tu Gatito";
-            document.querySelector(".name-container").style.display = "none";
-            catTitle.innerText = `🐱 ${catName} 🐱`;
-            catTitle.style.display = "block";
-            document.querySelector(".tamagotchi-container").style.display = "flex";
-            document.querySelector(".status").style.display = "block";
-            narrator.style.display = "block";
-            catImg.src = catStages[0].img;
-            feedBtn.style.display = "inline-block";
+        const sceneContainer = document.getElementById("scene");
+        const textBox = document.getElementById("text-box");
+        const choicesContainer = document.getElementById("choices");
+        const music = document.getElementById("music");
+
+        function loadScene(index) {
+            if (index === null) {
+                alert("Te amo ❤️ Gracias por compartir este momento conmigo.");
+                return;
+            }
+
+            const scene = story[index];
+
+            // Suaviza la transición entre escenas
+            sceneContainer.style.opacity = 0;
+            setTimeout(() => {
+                sceneContainer.style.backgroundImage = `url(${scene.background})`;
+                textBox.innerText = scene.text;
+                choicesContainer.innerHTML = "";
+
+                if (scene.choices) {
+                    scene.choices.forEach(choice => {
+                        const button = document.createElement("button");
+                        button.innerText = choice.text;
+                        button.onclick = function() {
+                            loadScene(choice.next);
+                        };
+                        choicesContainer.appendChild(button);
+                    });
+                }
+
+                sceneContainer.style.opacity = 1;
+            }, 500);
         }
 
-        function feedCat() {
-            if (stage === 0 && hunger < catStages[stage].requiredHunger) {
-                hunger++;
-                hungerSpan.innerText = hunger;
-                narrator.innerText = `🍖 ¡${catName} está comiendo!`;
-                if (hunger >= catStages[stage].requiredHunger) evolveCat();
-            }
-        }
+        document.addEventListener("DOMContentLoaded", function() {
+            loadScene(0);
 
-        function playWithCat() {
-            if (stage === 1 && happiness < catStages[stage].requiredHappiness) {
-                happiness++;
-                happinessSpan.innerText = happiness;
-                narrator.innerText = `🎾 ¡${catName} está jugando feliz!`;
-                if (happiness >= catStages[stage].requiredHappiness) evolveCat();
-            }
-        }
-
-        function evolveCat() {
-            stage++;
-            catImg.src = catStages[stage].img;
-            if (stage === 1) {
-                narrator.innerText = "Ahora quiere jugar, ¡diviértete con él! 🎾";
-                feedBtn.style.display = "none";
-                playBtn.style.display = "inline-block";
-            } else if (stage === 2) {
-                narrator.innerText = `¡${catName} ha crecido completamente y te quiere infinito! 💖`;
-                finalMessage.style.visibility = "visible";
-                saveBtn.style.display = "inline-block";
-                restartBtn.style.display = "inline-block";
-                playBtn.style.display = "none";
-            }
-        }
+            // Iniciar la música al hacer clic en cualquier parte
+            document.body.addEventListener("click", function() {
+                if (music.paused) {
+                    music.play();
+                }
+            }, { once: true });
+        });
     </script>
+
 </body>
 </html>
