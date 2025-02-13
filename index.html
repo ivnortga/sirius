@@ -13,6 +13,11 @@
             background-color: black;
             color: white;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
         .scene-container {
@@ -27,41 +32,63 @@
             position: relative;
             opacity: 0;
             transition: opacity 1s ease-in-out;
+            padding-bottom: 15vh; /* Espacio extra para botones */
         }
 
         .text-box {
-            width: 80%;
+            width: 90%;
+            max-width: 600px;
             background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
-            margin-bottom: 20px;
             font-size: 20px;
+            margin-bottom: 10px;
+            text-align: center;
         }
 
         .choices {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 10px;
+            flex-wrap: wrap; /* Permite que los botones bajen de línea si no caben */
+            width: 90%;
+            max-width: 600px;
         }
 
         .choices button {
             background-color: pink;
             color: black;
             font-size: 18px;
-            padding: 10px 15px;
+            padding: 12px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             transition: 0.3s;
+            width: 100%; /* Botones a ancho completo en móviles */
+            max-width: 250px; /* Tamaño máximo para evitar que sean demasiado grandes */
         }
 
         .choices button:hover {
             background-color: hotpink;
         }
 
-        #music {
-            display: none;
+        /* 🔥 RESPONSIVE - Ajustes para móviles */
+        @media screen and (max-width: 600px) {
+            .text-box {
+                font-size: 16px;
+                padding: 10px;
+                width: 95%;
+            }
+
+            .choices button {
+                font-size: 16px;
+                padding: 10px;
+                max-width: 200px;
+            }
+
+            .scene-container {
+                padding-bottom: 20vh; /* Más espacio para botones en móviles */
+            }
         }
     </style>
 </head>
