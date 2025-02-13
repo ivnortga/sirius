@@ -3,184 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novela Visual - San Valentín 💖</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background-color: black;
-            color: white;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-
-        .scene-container {
-            width: 100vw;
-            height: 100vh;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: center;
-            position: relative;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-            padding-bottom: 15vh; /* Espacio extra para botones */
-        }
-
-        .text-box {
-            width: 90%;
-            max-width: 600px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 20px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .choices {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap; /* Permite que los botones bajen de línea si no caben */
-            width: 90%;
-            max-width: 600px;
-        }
-
-        .choices button {
-            background-color: pink;
-            color: black;
-            font-size: 18px;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-            width: 100%; /* Botones a ancho completo en móviles */
-            max-width: 250px; /* Tamaño máximo para evitar que sean demasiado grandes */
-        }
-
-        .choices button:hover {
-            background-color: hotpink;
-        }
-
-        /* 🔥 RESPONSIVE - Ajustes para móviles */
-        @media screen and (max-width: 600px) {
-            .text-box {
-                font-size: 16px;
-                padding: 10px;
-                width: 95%;
-            }
-
-            .choices button {
-                font-size: 16px;
-                padding: 10px;
-                max-width: 200px;
-            }
-
-            .scene-container {
-                padding-bottom: 20vh; /* Más espacio para botones en móviles */
-            }
-        }
-    </style>
+    <title>Agenda de San Valentín</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-
-    <audio id="music" loop>
-        <source src="music.mp3" type="audio/mp3">
-    </audio>
-
-    <div id="scene" class="scene-container">
-        <div id="text-box" class="text-box"></div>
-        <div id="choices" class="choices"></div>
+<body class="flex justify-center items-center h-screen bg-red-100">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+        <h1 class="text-xl font-bold text-center text-red-600">Agenda de San Valentín</h1>
+        <ul class="mt-4 space-y-2" id="task-list">
+            <li><input type="checkbox" class="mr-2 task"> Tener mucho chocolate</li>
+            <li><input type="checkbox" class="mr-2 task"> Recibir un regalo especial</li>
+            <li><input type="checkbox" class="mr-2 task"> Sorpresa por la noche</li>
+            <li><input type="checkbox" class="mr-2 task"> Todo recibido</li>
+        </ul>
+        <div id="login" class="hidden mt-4">
+            <input type="text" id="username" placeholder="Usuario" class="w-full p-2 border rounded mt-2">
+            <input type="password" id="password" placeholder="Contraseña" class="w-full p-2 border rounded mt-2">
+            <button class="w-full bg-red-500 text-white p-2 rounded mt-2" onclick="checkLogin()">Entrar</button>
+        </div>
+        <p id="message" class="hidden text-center text-red-600 font-bold mt-4"></p>
     </div>
 
     <script>
-        const story = [
-            {
-                background: "img/1-habitacion.jpg", 
-                text: "Es un día tranquilo en tu habitación. Tu teléfono vibra con un mensaje misterioso...",
-                choices: [{ text: "Abrir el mensaje", next: 1 }]
-            },
-            {
-                background: "img/2-playa.jpg", 
-                text: "El mensaje te manda una ubicación. Al llegar, es la playa con un espigón al lado. En la arena hay un mensaje que dice: '¿Recuerdas la primera vez?'",
-                choices: [
-                    { text: "Sí, el monte Ineldo.", next: 2 },
-                    { text: "Te gané en los autos de choque.", next: 2 }
-                ]
-            },
-            {
-                background: "img/3-olas.jpg", 
-                text: "Sigues a una nueva ubicación. Mientras el sonido de las olas te relaja, sigues explorando...",
-                choices: [{ text: "Seguir explorando", next: 3 }]
-            },
-            {
-                background: "img/4-grafiti.jpg", 
-                text: "De repente, al llegar, ves un coche delante tuyo. Te subes a él y ves que siguen tus dibujos...",
-                choices: [{ text: "¡Es mi grafiti! ¿Por qué sigue ahí?", next: 4 }]
-            },
-            {
-                background: "img/5-final.jpg", 
-                text: "Porque hasta que no te veo, mi mundo se congela hasta volverte a ver... Porque eres la única persona que hace que mi corazón lata más fuerte.",
-                choices: [{ text: "Te amo.", next: null }]
-            }
-        ];
+        const tasks = document.querySelectorAll('.task');
+        const loginDiv = document.getElementById('login');
+        const message = document.getElementById('message');
 
-        const sceneContainer = document.getElementById("scene");
-        const textBox = document.getElementById("text-box");
-        const choicesContainer = document.getElementById("choices");
-        const music = document.getElementById("music");
-
-        function loadScene(index) {
-            if (index === null) {
-                alert("Te amo ❤️ Gracias por compartir este momento conmigo.");
-                return;
-            }
-
-            const scene = story[index];
-
-            // Suaviza la transición entre escenas
-            sceneContainer.style.opacity = 0;
-            setTimeout(() => {
-                sceneContainer.style.backgroundImage = `url(${scene.background})`;
-                textBox.innerText = scene.text;
-                choicesContainer.innerHTML = "";
-
-                if (scene.choices) {
-                    scene.choices.forEach(choice => {
-                        const button = document.createElement("button");
-                        button.innerText = choice.text;
-                        button.onclick = function() {
-                            loadScene(choice.next);
-                        };
-                        choicesContainer.appendChild(button);
-                    });
+        tasks.forEach(task => {
+            task.addEventListener('change', () => {
+                if ([...tasks].every(t => t.checked)) {
+                    loginDiv.classList.remove('hidden');
                 }
-
-                sceneContainer.style.opacity = 1;
-            }, 500);
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            loadScene(0);
-
-            // Iniciar la música al hacer clic en cualquier parte
-            document.body.addEventListener("click", function() {
-                if (music.paused) {
-                    music.play();
-                }
-            }, { once: true });
+            });
         });
-    </script>
 
+        function checkLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username === 'btisam' && password === 'sirius') {
+                message.innerText = 'Eres la mujer de mi vida, mi razón de ser, mi más grande inspiración. Cada día que pasa, mi amor por ti crece más y más, llenando cada rincón de mi corazón con la luz de tu existencia. Me desvivo por ti, por verte sonreír, por hacerte feliz, porque eres mi mayor tesoro. Te echo de menos con cada latido de mi corazón, y sueño con el momento en que pueda abrazarte y decirte cuánto significas para mí. Ojalá este Ramadán traiga para ti paz, alegría y bendiciones, porque nadie en este mundo merece más felicidad que tú. Mi amor por ti es eterno, inquebrantable y puro. Siempre tuyo, con todo mi corazón.';
+                loginDiv.classList.add('hidden');
+                message.classList.remove('hidden');
+            } else {
+                alert('Usuario o contraseña incorrectos');
+            }
+        }
+    </script>
 </body>
 </html>
