@@ -16,13 +16,15 @@
             max-width: 90%;
             margin: auto;
             word-wrap: break-word;
+            overflow-y: auto;
+            max-height: 90vh;
         }
         .highlight {
             color: #FFD700;
         }
     </style>
 </head>
-<body class="flex justify-center items-center h-screen bg-red-100">
+<body class="flex justify-center items-center min-h-screen bg-red-100">
     <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
         <h1 class="text-xl font-bold text-center text-red-600">Agenda de San Valentín</h1>
         <ul class="mt-4 space-y-2" id="task-list">
