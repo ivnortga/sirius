@@ -5,10 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agenda de San Valentín</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .message-container {
+            background-color: #FFFFFF;
+            color: #A4161A;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            max-width: 90%;
+            margin: auto;
+            word-wrap: break-word;
+        }
+        .highlight {
+            color: #FFD700;
+        }
+    </style>
 </head>
-<body class="flex justify-center items-center min-h-screen bg-red-100 p-4">
+<body class="flex justify-center items-center h-screen bg-red-100">
     <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-        <h1 class="text-xl font-bold text-center text-[#A4161A]">Agenda de San Valentín</h1>
+        <h1 class="text-xl font-bold text-center text-red-600">Agenda de San Valentín</h1>
         <ul class="mt-4 space-y-2" id="task-list">
             <li><input type="checkbox" class="mr-2 task"> Tener mucho chocolate</li>
             <li><input type="checkbox" class="mr-2 task"> Recibir un regalo especial</li>
@@ -18,17 +34,14 @@
         <div id="login" class="hidden mt-4">
             <input type="text" id="username" placeholder="Usuario" class="w-full p-2 border rounded mt-2">
             <input type="password" id="password" placeholder="Contraseña" class="w-full p-2 border rounded mt-2">
-            <button class="w-full bg-[#A4161A] text-white p-2 rounded mt-2" onclick="checkLogin()">Entrar</button>
+            <button class="w-full bg-red-500 text-white p-2 rounded mt-2" onclick="checkLogin()">Entrar</button>
         </div>
-        <div id="message-container" class="hidden mt-4 p-4 bg-white rounded-lg shadow-md overflow-y-auto max-h-[80vh]">
-            <p id="message" class="text-center text-[#A4161A] font-semibold whitespace-pre-line"></p>
-        </div>
+        <p id="message" class="hidden message-container"></p>
     </div>
 
     <script>
         const tasks = document.querySelectorAll('.task');
         const loginDiv = document.getElementById('login');
-        const messageContainer = document.getElementById('message-container');
         const message = document.getElementById('message');
 
         tasks.forEach(task => {
@@ -43,27 +56,15 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             if (username === 'btisam' && password === 'sirius') {
-                message.innerHTML = `
-                    <span class='text-[#FFD700] text-lg font-bold'>Mi niña,</span><br><br>
-                    Si supieras lo que es vivir con mi cabeza, entenderías muchas cosas... 
-                    Mi mente nunca para. Es un torbellino de ideas, de emociones, de impulsos.
-                    Pero hay algo que siempre permanece: <span class='text-[#FFD700] font-bold'>TÚ.</span><br><br>
-                    No sé amar a medias. <span class='text-[#FFD700]'>Eres mi constante, mi paz.</span>
-                    Me despierto con tu nombre en la cabeza, respiro tu recuerdo a cada instante y me duermo sabiendo que eres <span class='text-[#FFD700] font-bold'>lo mejor que me ha pasado.</span>
-                    <br><br>
-                    Cuando estamos juntos, el tiempo se detiene. Como aquella vez en Londres,
-                    o cuando hicimos que la gente bailara en plena calle en Mataró. Tú eres <span class='text-[#FFD700] font-bold'>mi calma y mi tormenta, mi ancla y mi impulso.</span>
-                    <br><br>
-                    He sido detallista, no porque espere algo, sino porque me nace del alma.
-                    Desde aquel primer chocolate de los viernes hasta cada pequeño gesto que he tenido contigo y tu familia...
-                    <br><br>
-                    No hay casualidades. <span class='text-[#FFD700]'>Eres mi destino.</span> Y si cierro los ojos, lo único que veo eres tú.
-                    No hay un solo día en que mi corazón no te elija. <span class='text-[#FFD700]'>Te amo.</span>
-                    <br><br>
-                    <span class='text-lg font-bold'>Tu chico, Iván.</span>
-                `;
+                message.innerHTML = '<span class="highlight">Mi niña,</span><br><br>' +
+                    'Si supieras lo que es vivir con mi cabeza, entenderías muchas cosas. Mi mente nunca para. Es un torbellino de ideas, de impulsos, de emociones que a veces ni yo entiendo. Pero si hay algo que tengo claro es que <span class="highlight">tú eres el único pensamiento que nunca cambia</span>, el único sentimiento que siempre permanece.<br><br>' +
+                    'No sé amar a medias. No puedo. <span class="highlight">Mi TDAH hace que lo que siento por ti sea una constante</span>, algo que no puedo apagar. Me despierto con tu nombre en la cabeza, respiro tu recuerdo a cada instante, y me duermo con la certeza de que eres lo mejor que me ha pasado.<br><br>' +
+                    'Cuando estamos juntos, el tiempo deja de existir. Tú eres mi calma y mi tormenta, mi ancla y mi impulso, todo al mismo tiempo.<br><br>' +
+                    'Lo nuestro no es un simple encuentro, no es una casualidad, no es algo que el tiempo pueda borrar. Es una verdad que se siente en la piel, que me atraviesa el alma y que da sentido a mis días. <span class="highlight">Si cierro los ojos, lo único que veo eres tú.</span><br><br>' +
+                    'No hay un solo día en que mi corazón no te elija. Eres mi presente, mi futuro, mi todo. Y eso, mi amor, no cambia. <span class="highlight">Te echo de menos.</span><br><br>' +
+                    '<span class="highlight">Iván</span>';
                 loginDiv.classList.add('hidden');
-                messageContainer.classList.remove('hidden');
+                message.classList.remove('hidden');
             } else {
                 alert('Usuario o contraseña incorrectos');
             }
